@@ -1,7 +1,8 @@
 package io.example.service;
 
 import io.example.domain.dto.CreateUserRequest;
-import io.example.domain.dto.SearchUsersRequest;
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.dto.UpdateUserRequest;
 import io.example.domain.dto.UserView;
 import io.example.domain.mapper.UserEditMapper;
@@ -111,8 +112,8 @@ public class UserService implements UserDetailsService {
         return userViewMapper.toUserView(userRepo.getById(id));
     }
 
-    public List<UserView> searchUsers(SearchUsersRequest request) {
-        List<User> users = userRepo.searchUsers(request);
+    public List<UserView> searchUsers(Page page, SearchUsersQuery query) {
+        List<User> users = userRepo.searchUsers(page, query);
         return userViewMapper.toUserView(users);
     }
 

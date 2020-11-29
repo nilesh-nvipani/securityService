@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.api.data.UserTestDataFactory;
 import io.example.domain.dto.ListResponse;
-import io.example.domain.dto.SearchUsersRequest;
+import io.example.domain.dto.SearchRequest;
+import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.dto.UserView;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,67 +59,67 @@ public class TestUserSearchApi {
     }
 
     private void testIdFilter(String id) throws Exception {
-        SearchUsersRequest request;
+        SearchUsersQuery query;
         ListResponse<UserView> userViewList;
 
-        // Search request with book id equal
-        request = new SearchUsersRequest();
-        request.setId(id);
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query with book id equal
+        query = new SearchUsersQuery();
+        query.setId(id);
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testUsernameFilter() throws Exception {
-        SearchUsersRequest request;
+        SearchUsersQuery query;
         ListResponse<UserView> userViewList;
 
-        // Search request username starts with
-        request = new SearchUsersRequest();
-        request.setUsername("evelin");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query username starts with
+        query = new SearchUsersQuery();
+        query.setUsername("evelin");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(2, userViewList.getItems().size(), "Invalid search result!");
 
-        // Search request username contains
-        request = new SearchUsersRequest();
-        request.setUsername("gmail");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query username contains
+        query = new SearchUsersQuery();
+        query.setUsername("gmail");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(2, userViewList.getItems().size(), "Invalid search result!");
 
-        // Search request username case insensitive
-        request = new SearchUsersRequest();
-        request.setUsername("William");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query username case insensitive
+        query = new SearchUsersQuery();
+        query.setUsername("William");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testFullNameFilter() throws Exception {
-        SearchUsersRequest request;
+        SearchUsersQuery query;
         ListResponse<UserView> userViewList;
 
-        // Search request full name starts with
-        request = new SearchUsersRequest();
-        request.setUsername("William");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query full name starts with
+        query = new SearchUsersQuery();
+        query.setUsername("William");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
 
-        // Search request full name contains
-        request = new SearchUsersRequest();
-        request.setUsername("David");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query full name contains
+        query = new SearchUsersQuery();
+        query.setUsername("David");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
 
-        // Search request full name case insensitive
-        request = new SearchUsersRequest();
-        request.setUsername("CLARKE");
-        userViewList = execute("/api/admin/user/search", request);
+        // Search query full name case insensitive
+        query = new SearchUsersQuery();
+        query.setUsername("CLARKE");
+        userViewList = execute("/api/admin/user/search", query);
         assertEquals(1, userViewList.getItems().size(), "Invalid search result!");
     }
 
-    private ListResponse<UserView> execute(String url, SearchUsersRequest request) throws Exception {
+    private ListResponse<UserView> execute(String url, SearchUsersQuery query) throws Exception {
         MvcResult result = this.mockMvc
                 .perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(objectMapper, request)))
+                        .content(toJson(objectMapper, new SearchRequest<>(query))))
                 .andExpect(status().isOk())
                 .andReturn();
 

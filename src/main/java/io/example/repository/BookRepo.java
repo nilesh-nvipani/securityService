@@ -1,6 +1,7 @@
 package io.example.repository;
 
-import io.example.domain.dto.SearchBooksRequest;
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchBooksQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.Book;
 import org.bson.types.ObjectId;
@@ -39,7 +40,7 @@ public interface BookRepo extends MongoRepository<Book, ObjectId>, BookRepoCusto
 
 interface BookRepoCustom {
 
-    List<Book> searchBooks(SearchBooksRequest request);
+    List<Book> searchBooks(Page page, SearchBooksQuery query);
 
 }
 
@@ -52,42 +53,42 @@ class BookRepoCustomImpl implements BookRepoCustom {
     }
 
     @Override
-    public List<Book> searchBooks(SearchBooksRequest request) {
+    public List<Book> searchBooks(Page page, SearchBooksQuery query) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         List<Criteria> criteriaList = new ArrayList<>();
-        if (!StringUtils.isEmpty(request.getId())) {
-            criteriaList.add(Criteria.where("id").is(new ObjectId(request.getId())));
+        if (!StringUtils.isEmpty(query.getId())) {
+            criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
         }
-        if (!StringUtils.isEmpty(request.getCreatorId())) {
-            criteriaList.add(Criteria.where("creatorId").is(new ObjectId(request.getCreatorId())));
+        if (!StringUtils.isEmpty(query.getCreatorId())) {
+            criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.getCreatorId())));
         }
-        if (request.getCreatedAtStart() != null) {
-            criteriaList.add(Criteria.where("createdAt").gte(request.getCreatedAtStart()));
+        if (query.getCreatedAtStart() != null) {
+            criteriaList.add(Criteria.where("createdAt").gte(query.getCreatedAtStart()));
         }
-        if (request.getCreatedAtEnd() != null) {
-            criteriaList.add(Criteria.where("createdAt").lt(request.getCreatedAtEnd()));
+        if (query.getCreatedAtEnd() != null) {
+            criteriaList.add(Criteria.where("createdAt").lt(query.getCreatedAtEnd()));
         }
-        if (!StringUtils.isEmpty(request.getTitle())) {
-            criteriaList.add(Criteria.where("title").regex(request.getTitle(), "i"));
+        if (!StringUtils.isEmpty(query.getTitle())) {
+            criteriaList.add(Criteria.where("title").regex(query.getTitle(), "i"));
         }
-        if (!CollectionUtils.isEmpty(request.getGenres())) {
-            criteriaList.add(Criteria.where("genres").all(request.getGenres()));
+        if (!CollectionUtils.isEmpty(query.getGenres())) {
+            criteriaList.add(Criteria.where("genres").all(query.getGenres()));
         }
-        if (!StringUtils.isEmpty(request.getIsbn13())) {
-            criteriaList.add(Criteria.where("isbn13").is(request.getIsbn13()));
+        if (!StringUtils.isEmpty(query.getIsbn13())) {
+            criteriaList.add(Criteria.where("isbn13").is(query.getIsbn13()));
         }
-        if (!StringUtils.isEmpty(request.getIsbn10())) {
-            criteriaList.add(Criteria.where("isbn10").is(request.getIsbn10()));
+        if (!StringUtils.isEmpty(query.getIsbn10())) {
+            criteriaList.add(Criteria.where("isbn10").is(query.getIsbn10()));
         }
-        if (!StringUtils.isEmpty(request.getPublisher())) {
-            criteriaList.add(Criteria.where("publisher").regex(request.getPublisher(), "i"));
+        if (!StringUtils.isEmpty(query.getPublisher())) {
+            criteriaList.add(Criteria.where("publisher").regex(query.getPublisher(), "i"));
         }
-        if (request.getPublishDateStart() != null) {
-            criteriaList.add(Criteria.where("publishDate").gte(request.getPublishDateStart()));
+        if (query.getPublishDateStart() != null) {
+            criteriaList.add(Criteria.where("publishDate").gte(query.getPublishDateStart()));
         }
-        if (request.getPublishDateEnd() != null) {
-            criteriaList.add(Criteria.where("publishDate").lt(request.getPublishDateEnd()));
+        if (query.getPublishDateEnd() != null) {
+            criteriaList.add(Criteria.where("publishDate").lt(query.getPublishDateEnd()));
         }
         if (!criteriaList.isEmpty()) {
             Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -95,11 +96,11 @@ class BookRepoCustomImpl implements BookRepoCustom {
         }
 
         criteriaList = new ArrayList<>();
-        if (!StringUtils.isEmpty(request.getAuthorId())) {
-            criteriaList.add(Criteria.where("author._id").is(new ObjectId(request.getAuthorId())));
+        if (!StringUtils.isEmpty(query.getAuthorId())) {
+            criteriaList.add(Criteria.where("author._id").is(new ObjectId(query.getAuthorId())));
         }
-        if (!StringUtils.isEmpty(request.getAuthorFullName())) {
-            criteriaList.add(Criteria.where("author.fullName").regex(request.getAuthorFullName(), "i"));
+        if (!StringUtils.isEmpty(query.getAuthorFullName())) {
+            criteriaList.add(Criteria.where("author.fullName").regex(query.getAuthorFullName(), "i"));
         }
         if (!criteriaList.isEmpty()) {
             Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -109,8 +110,8 @@ class BookRepoCustomImpl implements BookRepoCustom {
         }
 
         operations.add(sort(Sort.Direction.DESC, "createdAt"));
-        operations.add(skip((request.getPage() - 1) * request.getLimit()));
-        operations.add(limit(request.getLimit()));
+        operations.add(skip((page.getNumber() - 1) * page.getLimit()));
+        operations.add(limit(page.getLimit()));
 
         TypedAggregation<Book> aggregation = newAggregation(Book.class, operations);
         System.out.println(aggregation.toString());

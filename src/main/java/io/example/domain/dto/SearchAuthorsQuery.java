@@ -1,21 +1,12 @@
 package io.example.domain.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data @EqualsAndHashCode(callSuper = true)
-public class SearchAuthorsRequest extends PageRequest {
-
-    public SearchAuthorsRequest() {
-        super(1, 10);
-    }
-
-    public SearchAuthorsRequest(int page, int limit) {
-        super(page, limit);
-    }
+@Data
+public class SearchAuthorsQuery {
 
     private String id;
 

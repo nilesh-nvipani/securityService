@@ -4,7 +4,8 @@ import io.example.domain.dto.AuthorView;
 import io.example.domain.dto.BookView;
 import io.example.domain.dto.EditAuthorRequest;
 import io.example.domain.dto.ListResponse;
-import io.example.domain.dto.SearchAuthorsRequest;
+import io.example.domain.dto.SearchAuthorsQuery;
+import io.example.domain.dto.SearchRequest;
 import io.example.domain.model.Role;
 import io.example.service.AuthorService;
 import io.example.service.BookService;
@@ -64,8 +65,8 @@ public class AuthorApi {
     }
 
     @PostMapping("search")
-    public ListResponse<AuthorView> search(@RequestBody @Valid SearchAuthorsRequest request) {
-        return new ListResponse<>(authorService.searchAuthors(request));
+    public ListResponse<AuthorView> search(@RequestBody @Valid SearchRequest<SearchAuthorsQuery> request) {
+        return new ListResponse<>(authorService.searchAuthors(request.getPage(), request.getQuery()));
     }
 
 }

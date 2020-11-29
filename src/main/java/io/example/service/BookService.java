@@ -2,7 +2,8 @@ package io.example.service;
 
 import io.example.domain.dto.BookView;
 import io.example.domain.dto.EditBookRequest;
-import io.example.domain.dto.SearchBooksRequest;
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchBooksQuery;
 import io.example.domain.mapper.BookEditMapper;
 import io.example.domain.mapper.BookViewMapper;
 import io.example.domain.model.Author;
@@ -87,8 +88,8 @@ public class BookService {
         return bookViewMapper.toBookView(bookRepo.findAllById(author.getBookIds()));
     }
 
-    public List<BookView> searchBooks(SearchBooksRequest request) {
-        return bookViewMapper.toBookView(bookRepo.searchBooks(request));
+    public List<BookView> searchBooks(Page page, SearchBooksQuery query) {
+        return bookViewMapper.toBookView(bookRepo.searchBooks(page, query));
     }
 
 }

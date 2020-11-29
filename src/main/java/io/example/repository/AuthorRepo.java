@@ -1,6 +1,7 @@
 package io.example.repository;
 
-import io.example.domain.dto.SearchAuthorsRequest;
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchAuthorsQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.Author;
 import org.bson.types.ObjectId;
@@ -39,7 +40,7 @@ public interface AuthorRepo extends MongoRepository<Author, ObjectId>, AuthorRep
 
 interface AuthorRepoCustom {
 
-    List<Author> searchAuthors(SearchAuthorsRequest request);
+    List<Author> searchAuthors(Page page, SearchAuthorsQuery query);
 
 }
 
@@ -52,27 +53,27 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
     }
 
     @Override
-    public List<Author> searchAuthors(SearchAuthorsRequest request) {
+    public List<Author> searchAuthors(Page page, SearchAuthorsQuery query) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         List<Criteria> criteriaList = new ArrayList<>();
-        if (!StringUtils.isEmpty(request.getId())) {
-            criteriaList.add(Criteria.where("id").is(new ObjectId(request.getId())));
+        if (!StringUtils.isEmpty(query.getId())) {
+            criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
         }
-        if (!StringUtils.isEmpty(request.getCreatorId())) {
-            criteriaList.add(Criteria.where("creatorId").is(new ObjectId(request.getCreatorId())));
+        if (!StringUtils.isEmpty(query.getCreatorId())) {
+            criteriaList.add(Criteria.where("creatorId").is(new ObjectId(query.getCreatorId())));
         }
-        if (request.getCreatedAtStart() != null) {
-            criteriaList.add(Criteria.where("createdAt").gte(request.getCreatedAtStart()));
+        if (query.getCreatedAtStart() != null) {
+            criteriaList.add(Criteria.where("createdAt").gte(query.getCreatedAtStart()));
         }
-        if (request.getCreatedAtEnd() != null) {
-            criteriaList.add(Criteria.where("createdAt").lt(request.getCreatedAtEnd()));
+        if (query.getCreatedAtEnd() != null) {
+            criteriaList.add(Criteria.where("createdAt").lt(query.getCreatedAtEnd()));
         }
-        if (!StringUtils.isEmpty(request.getFullName())) {
-            criteriaList.add(Criteria.where("fullName").regex(request.getFullName(), "i"));
+        if (!StringUtils.isEmpty(query.getFullName())) {
+            criteriaList.add(Criteria.where("fullName").regex(query.getFullName(), "i"));
         }
-        if (!CollectionUtils.isEmpty(request.getGenres())) {
-            criteriaList.add(Criteria.where("genres").all(request.getGenres()));
+        if (!CollectionUtils.isEmpty(query.getGenres())) {
+            criteriaList.add(Criteria.where("genres").all(query.getGenres()));
         }
         if (!criteriaList.isEmpty()) {
             Criteria authorCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -80,11 +81,11 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
         }
 
         criteriaList = new ArrayList<>();
-        if (!StringUtils.isEmpty(request.getBookId())) {
-            criteriaList.add(Criteria.where("book._id").is(new ObjectId(request.getBookId())));
+        if (!StringUtils.isEmpty(query.getBookId())) {
+            criteriaList.add(Criteria.where("book._id").is(new ObjectId(query.getBookId())));
         }
-        if (!StringUtils.isEmpty(request.getBookTitle())) {
-            criteriaList.add(Criteria.where("book.title").regex(request.getBookTitle(), "i"));
+        if (!StringUtils.isEmpty(query.getBookTitle())) {
+            criteriaList.add(Criteria.where("book.title").regex(query.getBookTitle(), "i"));
         }
         if (!criteriaList.isEmpty()) {
             Criteria bookCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -94,8 +95,8 @@ class AuthorRepoCustomImpl implements AuthorRepoCustom {
         }
 
         operations.add(sort(Sort.Direction.DESC, "createdAt"));
-        operations.add(skip((request.getPage() - 1) * request.getLimit()));
-        operations.add(limit(request.getLimit()));
+        operations.add(skip((page.getNumber() - 1) * page.getLimit()));
+        operations.add(limit(page.getLimit()));
 
         TypedAggregation<Author> aggregation = newAggregation(Author.class, operations);
         AggregationResults<Author> results = mongoTemplate.aggregate(aggregation, Author.class);

@@ -7,7 +7,8 @@ import io.example.api.data.BookTestDataFactory;
 import io.example.domain.dto.AuthorView;
 import io.example.domain.dto.BookView;
 import io.example.domain.dto.ListResponse;
-import io.example.domain.dto.SearchBooksRequest;
+import io.example.domain.dto.SearchBooksQuery;
+import io.example.domain.dto.SearchRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -93,161 +94,161 @@ public class TestBookSearchApi {
     }
 
     private void testIdFilter(String id) throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request with book id equal
-        request = new SearchBooksRequest();
-        request.setId(id);
-        bookViewList = execute("/api/book/search", request);
+        // Search query with book id equal
+        query = new SearchBooksQuery();
+        query.setId(id);
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testTitleFilter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request book title contains
-        request = new SearchBooksRequest();
-        request.setTitle("Book Search G");
-        bookViewList = execute("/api/book/search", request);
+        // Search query book title contains
+        query = new SearchBooksQuery();
+        query.setTitle("Book Search G");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request book title contains case insensitive
-        request = new SearchBooksRequest();
-        request.setTitle("Book Search g");
-        bookViewList = execute("/api/book/search", request);
+        // Search query book title contains case insensitive
+        query = new SearchBooksQuery();
+        query.setTitle("Book Search g");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testGenresFilter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request genres all
-        request = new SearchBooksRequest();
-        request.setGenres(Set.of("Book Search Genre A", "Book Search Genre B"));
-        bookViewList = execute("/api/book/search", request);
+        // Search query genres all
+        query = new SearchBooksQuery();
+        query.setGenres(Set.of("Book Search Genre A", "Book Search Genre B"));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request genres mismatch
-        request = new SearchBooksRequest();
-        request.setGenres(Set.of("Book Search Genre A", "Book Search Genre C"));
-        bookViewList = execute("/api/book/search", request);
+        // Search query genres mismatch
+        query = new SearchBooksQuery();
+        query.setGenres(Set.of("Book Search Genre A", "Book Search Genre C"));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request genres partial
-        request = new SearchBooksRequest();
-        request.setGenres(Set.of("Book Search Genre A"));
-        bookViewList = execute("/api/book/search", request);
+        // Search query genres partial
+        query = new SearchBooksQuery();
+        query.setGenres(Set.of("Book Search Genre A"));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testIsbn13Filter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request isbn13 equals
-        request = new SearchBooksRequest();
-        request.setIsbn13("978-1-56619-909-4");
-        bookViewList = execute("/api/book/search", request);
+        // Search query isbn13 equals
+        query = new SearchBooksQuery();
+        query.setIsbn13("978-1-56619-909-4");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testIsbn10Filter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request isbn10 equals
-        request = new SearchBooksRequest();
-        request.setIsbn10("1-56619-909-3");
-        bookViewList = execute("/api/book/search", request);
+        // Search query isbn10 equals
+        query = new SearchBooksQuery();
+        query.setIsbn10("1-56619-909-3");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testPublisherFilter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request book publisher contains
-        request = new SearchBooksRequest();
-        request.setPublisher("Book Search A Pub");
-        bookViewList = execute("/api/book/search", request);
+        // Search query book publisher contains
+        query = new SearchBooksQuery();
+        query.setPublisher("Book Search A Pub");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request book publisher contains case insensitive
-        request = new SearchBooksRequest();
-        request.setPublisher("Book Search a");
-        bookViewList = execute("/api/book/search", request);
+        // Search query book publisher contains case insensitive
+        query = new SearchBooksQuery();
+        query.setPublisher("Book Search a");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testPublishDateFilter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request publish date interval contains
-        request = new SearchBooksRequest();
-        request.setPublishDateStart(LocalDate.of(1985, 5, 1));
-        request.setPublishDateEnd(LocalDate.of(1985, 9, 1));
-        bookViewList = execute("/api/book/search", request);
+        // Search query publish date interval contains
+        query = new SearchBooksQuery();
+        query.setPublishDateStart(LocalDate.of(1985, 5, 1));
+        query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request publish date interval not contains
-        request = new SearchBooksRequest();
-        request.setPublishDateStart(LocalDate.of(1985, 8, 1));
-        request.setPublishDateEnd(LocalDate.of(1985, 9, 1));
-        bookViewList = execute("/api/book/search", request);
+        // Search query publish date interval not contains
+        query = new SearchBooksQuery();
+        query.setPublishDateStart(LocalDate.of(1985, 8, 1));
+        query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request publish date interval start is inclusive
-        request = new SearchBooksRequest();
-        request.setPublishDateStart(LocalDate.of(1985, 7, 17));
-        request.setPublishDateEnd(LocalDate.of(1985, 9, 1));
-        bookViewList = execute("/api/book/search", request);
+        // Search query publish date interval start is inclusive
+        query = new SearchBooksQuery();
+        query.setPublishDateStart(LocalDate.of(1985, 7, 17));
+        query.setPublishDateEnd(LocalDate.of(1985, 9, 1));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(1, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request publish date interval end is exclusive
-        request = new SearchBooksRequest();
-        request.setPublishDateStart(LocalDate.of(1985, 5, 1));
-        request.setPublishDateEnd(LocalDate.of(1985, 7, 17));
-        bookViewList = execute("/api/book/search", request);
+        // Search query publish date interval end is exclusive
+        query = new SearchBooksQuery();
+        query.setPublishDateStart(LocalDate.of(1985, 5, 1));
+        query.setPublishDateEnd(LocalDate.of(1985, 7, 17));
+        bookViewList = execute("/api/book/search", query);
         assertEquals(0, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testAuthorIdFilter(String authorId) throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request with book id equal
-        request = new SearchBooksRequest();
-        request.setAuthorId(authorId);
-        bookViewList = execute("/api/book/search", request);
+        // Search query with book id equal
+        query = new SearchBooksQuery();
+        query.setAuthorId(authorId);
+        bookViewList = execute("/api/book/search", query);
         assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testAuthorFullNameFilter() throws Exception {
-        SearchBooksRequest request;
+        SearchBooksQuery query;
         ListResponse<BookView> bookViewList;
 
-        // Search request author full name contains
-        request = new SearchBooksRequest();
-        request.setAuthorFullName("Book Search A");
-        bookViewList = execute("/api/book/search", request);
+        // Search query author full name contains
+        query = new SearchBooksQuery();
+        query.setAuthorFullName("Book Search A");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
 
-        // Search request author full name contains case insensitive
-        request = new SearchBooksRequest();
-        request.setAuthorFullName("Book Search c");
-        bookViewList = execute("/api/book/search", request);
+        // Search query author full name contains case insensitive
+        query = new SearchBooksQuery();
+        query.setAuthorFullName("Book Search c");
+        bookViewList = execute("/api/book/search", query);
         assertEquals(5, bookViewList.getItems().size(), "Invalid search result!");
     }
 
-    private ListResponse<BookView> execute(String url, SearchBooksRequest request) throws Exception {
+    private ListResponse<BookView> execute(String url, SearchBooksQuery query) throws Exception {
         MvcResult result = this.mockMvc
                 .perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(objectMapper, request)))
+                        .content(toJson(objectMapper, new SearchRequest<>(query))))
                 .andExpect(status().isOk())
                 .andReturn();
 

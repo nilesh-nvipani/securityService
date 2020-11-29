@@ -2,7 +2,8 @@ package io.example.api;
 
 import io.example.domain.dto.CreateUserRequest;
 import io.example.domain.dto.ListResponse;
-import io.example.domain.dto.SearchUsersRequest;
+import io.example.domain.dto.SearchRequest;
+import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.dto.UpdateUserRequest;
 import io.example.domain.dto.UserView;
 import io.example.domain.model.Role;
@@ -53,8 +54,8 @@ public class UserAdminApi {
     }
 
     @PostMapping("search")
-    public ListResponse<UserView> search(@RequestBody SearchUsersRequest request) {
-        return new ListResponse<>(userService.searchUsers(request));
+    public ListResponse<UserView> search(@RequestBody SearchRequest<SearchUsersQuery> request) {
+        return new ListResponse<>(userService.searchUsers(request.getPage(), request.getQuery()));
     }
 
 }

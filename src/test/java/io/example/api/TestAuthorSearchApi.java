@@ -7,7 +7,8 @@ import io.example.api.data.BookTestDataFactory;
 import io.example.domain.dto.AuthorView;
 import io.example.domain.dto.BookView;
 import io.example.domain.dto.ListResponse;
-import io.example.domain.dto.SearchAuthorsRequest;
+import io.example.domain.dto.SearchAuthorsQuery;
+import io.example.domain.dto.SearchRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -82,89 +83,89 @@ public class TestAuthorSearchApi {
     }
 
     private void testIdFilter(String id) throws Exception {
-        SearchAuthorsRequest request;
+        SearchAuthorsQuery query;
         ListResponse<AuthorView> authorViewList;
 
-        // Search request with book id equal
-        request = new SearchAuthorsRequest();
-        request.setId(id);
-        authorViewList = execute("/api/author/search", request);
+        // Search query with book id equal
+        query = new SearchAuthorsQuery();
+        query.setId(id);
+        authorViewList = execute("/api/author/search", query);
         assertEquals(1, authorViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testFullNameFilter() throws Exception {
-        SearchAuthorsRequest request;
+        SearchAuthorsQuery query;
         ListResponse<AuthorView> authorViewList;
 
-        // Search request author full name contains
-        request = new SearchAuthorsRequest();
-        request.setFullName("Author Search A");
-        authorViewList = execute("/api/author/search", request);
+        // Search query author full name contains
+        query = new SearchAuthorsQuery();
+        query.setFullName("Author Search A");
+        authorViewList = execute("/api/author/search", query);
         assertEquals(1, authorViewList.getItems().size(), "Invalid search result!");
 
-        // Search request author full name contains case insensitive
-        request = new SearchAuthorsRequest();
-        request.setFullName("Author Search b");
-        authorViewList = execute("/api/author/search", request);
+        // Search query author full name contains case insensitive
+        query = new SearchAuthorsQuery();
+        query.setFullName("Author Search b");
+        authorViewList = execute("/api/author/search", query);
         assertEquals(1, authorViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testGenresFilter() throws Exception {
-        SearchAuthorsRequest request;
+        SearchAuthorsQuery query;
         ListResponse<AuthorView> authorViewList;
 
-        // Search request genres all
-        request = new SearchAuthorsRequest();
-        request.setGenres(Set.of("Author Search Genre A", "Author Search Genre B"));
-        authorViewList = execute("/api/author/search", request);
+        // Search query genres all
+        query = new SearchAuthorsQuery();
+        query.setGenres(Set.of("Author Search Genre A", "Author Search Genre B"));
+        authorViewList = execute("/api/author/search", query);
         assertEquals(1, authorViewList.getItems().size(), "Invalid search result!");
 
-        // Search request genres mismatch
-        request = new SearchAuthorsRequest();
-        request.setGenres(Set.of("Author Search Genre A", "Author Search Genre C"));
-        authorViewList = execute("/api/author/search", request);
+        // Search query genres mismatch
+        query = new SearchAuthorsQuery();
+        query.setGenres(Set.of("Author Search Genre A", "Author Search Genre C"));
+        authorViewList = execute("/api/author/search", query);
         assertEquals(0, authorViewList.getItems().size(), "Invalid search result!");
 
-        // Search request genres partial
-        request = new SearchAuthorsRequest();
-        request.setGenres(Set.of("Author Search Genre A"));
-        authorViewList = execute("/api/author/search", request);
+        // Search query genres partial
+        query = new SearchAuthorsQuery();
+        query.setGenres(Set.of("Author Search Genre A"));
+        authorViewList = execute("/api/author/search", query);
         assertEquals(1, authorViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testBookIdFilter(String bookId) throws Exception {
-        SearchAuthorsRequest request;
+        SearchAuthorsQuery query;
         ListResponse<AuthorView> authorViewList;
 
-        // Search request with book id equal
-        request = new SearchAuthorsRequest();
-        request.setBookId(bookId);
-        authorViewList = execute("/api/author/search", request);
+        // Search query with book id equal
+        query = new SearchAuthorsQuery();
+        query.setBookId(bookId);
+        authorViewList = execute("/api/author/search", query);
         assertEquals(3, authorViewList.getItems().size(), "Invalid search result!");
     }
 
     private void testBookTitleFilter() throws Exception {
-        SearchAuthorsRequest request;
+        SearchAuthorsQuery query;
         ListResponse<AuthorView> authorViewList;
 
-        // Search request book title contains
-        request = new SearchAuthorsRequest();
-        request.setBookTitle("Author Search A");
-        authorViewList = execute("/api/author/search", request);
+        // Search query book title contains
+        query = new SearchAuthorsQuery();
+        query.setBookTitle("Author Search A");
+        authorViewList = execute("/api/author/search", query);
         assertEquals(3, authorViewList.getItems().size(), "Invalid search result!");
 
-        // Search request book title contains case insensitive
-        request = new SearchAuthorsRequest();
-        request.setBookTitle("Author Search c");
-        authorViewList = execute("/api/author/search", request);
+        // Search query book title contains case insensitive
+        query = new SearchAuthorsQuery();
+        query.setBookTitle("Author Search c");
+        authorViewList = execute("/api/author/search", query);
         assertEquals(3, authorViewList.getItems().size(), "Invalid search result!");
     }
 
-    private ListResponse<AuthorView> execute(String url, SearchAuthorsRequest request) throws Exception {
+    private ListResponse<AuthorView> execute(String url, SearchAuthorsQuery query) throws Exception {
         MvcResult result = this.mockMvc
                 .perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(objectMapper, request)))
+                        .content(toJson(objectMapper, new SearchRequest<>(query))))
                 .andExpect(status().isOk())
                 .andReturn();
 

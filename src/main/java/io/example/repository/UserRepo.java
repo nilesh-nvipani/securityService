@@ -1,6 +1,7 @@
 package io.example.repository;
 
-import io.example.domain.dto.SearchUsersRequest;
+import io.example.domain.dto.Page;
+import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.User;
 import org.bson.types.ObjectId;
@@ -62,7 +63,7 @@ public interface UserRepo extends UserRepoCustom, MongoRepository<User, ObjectId
 
 interface UserRepoCustom {
 
-    List<User> searchUsers(SearchUsersRequest request);
+    List<User> searchUsers(Page page, SearchUsersQuery query);
 
 }
 
@@ -75,18 +76,18 @@ class UserRepoCustomImpl implements UserRepoCustom {
     }
 
     @Override
-    public List<User> searchUsers(SearchUsersRequest request) {
+    public List<User> searchUsers(Page page, SearchUsersQuery query) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         List<Criteria> criteriaList = new ArrayList<>();
-        if (!StringUtils.isEmpty(request.getId())) {
-            criteriaList.add(Criteria.where("id").is(new ObjectId(request.getId())));
+        if (!StringUtils.isEmpty(query.getId())) {
+            criteriaList.add(Criteria.where("id").is(new ObjectId(query.getId())));
         }
-        if (!StringUtils.isEmpty(request.getUsername())) {
-            criteriaList.add(Criteria.where("username").regex(request.getUsername(), "i"));
+        if (!StringUtils.isEmpty(query.getUsername())) {
+            criteriaList.add(Criteria.where("username").regex(query.getUsername(), "i"));
         }
-        if (!StringUtils.isEmpty(request.getFullName())) {
-            criteriaList.add(Criteria.where("fullName").regex(request.getFullName(), "i"));
+        if (!StringUtils.isEmpty(query.getFullName())) {
+            criteriaList.add(Criteria.where("fullName").regex(query.getFullName(), "i"));
         }
         if (!criteriaList.isEmpty()) {
             Criteria userCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
@@ -94,8 +95,8 @@ class UserRepoCustomImpl implements UserRepoCustom {
         }
 
         operations.add(sort(Sort.Direction.DESC, "createdAt"));
-        operations.add(skip((request.getPage() - 1) * request.getLimit()));
-        operations.add(limit(request.getLimit()));
+        operations.add(skip((page.getNumber() - 1) * page.getLimit()));
+        operations.add(limit(page.getLimit()));
 
         TypedAggregation<User> aggregation = newAggregation(User.class, operations);
         AggregationResults<User> results = mongoTemplate.aggregate(aggregation, User.class);
