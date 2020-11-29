@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Optional.ofNullable;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -60,7 +62,7 @@ public class GlobalExceptionHandler {
 
         Map<String, String> details = new HashMap<>();
         details.put("paramName", ex.getName());
-        details.put("paramValue", ex.getValue() == null ? "" : ex.getValue().toString());
+        details.put("paramValue", ofNullable(ex.getValue()).map(Object::toString).orElse(""));
         details.put("errorMessage", ex.getMessage());
 
         return ResponseEntity

@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Optional;
+import static java.util.Optional.ofNullable;
 
 @Configuration @EnableMongoAuditing
 public class MongoConfig {
@@ -22,7 +22,7 @@ public class MongoConfig {
             if (authentication != null && authentication.getPrincipal() instanceof User) {
                 user = (User) authentication.getPrincipal();
             }
-            return user == null ? Optional.empty() : Optional.of(user.getId());
+            return ofNullable(user).map(User::getId);
         };
     }
 
