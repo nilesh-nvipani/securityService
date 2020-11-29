@@ -1,62 +1,47 @@
 package io.example.configuration;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.List;
-
-@Configuration @EnableSwagger2
-@Import({BeanValidatorPluginsConfiguration.class})
+@Configuration
 public class SwaggerConfig {
 
     @Bean
-    public Docket swaggerSpringMvcPlugin() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .securityContexts(List.of(securityContext()))
-                .securitySchemes(List.of(apiKey()))
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Unity API")
-                .description("Rest API for Unity web application")
-                .version("1.0")
-                .build();
-    }
-
-    private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
-    }
-
-    private SecurityContext securityContext() {
-        return SecurityContext
+    public GroupedOpenApi apiGroup() {
+        return GroupedOpenApi
                 .builder()
-                .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.regex("/api/.*"))
+                .group("Api")
+                .pathsToMatch("/api/**")
                 .build();
     }
 
-    private List<SecurityReference> defaultAuth() {
-        AuthorizationScope[] authorizationScopes = {new AuthorizationScope("global", "accessEverything")};
-        return List.of(new SecurityReference("JWT", authorizationScopes));
+    @Bean
+    public OpenAPI apiInfo() {
+        final String securitySchemeName = "bearerAuth";
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(
+                        new Components()
+                                .addSecuritySchemes(securitySchemeName,
+                                        new SecurityScheme()
+                                                .name(securitySchemeName)
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
+                                )
+                )
+                .info(
+                        new Info()
+                                .title("Bookstore Rest Api")
+                                .description("Rest Api for bookstore web application")
+                                .version("1.0")
+                );
     }
 
 }

@@ -7,7 +7,7 @@ import io.example.domain.dto.UserView;
 import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.service.UserService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Api(tags = "Authentication")
+@Tag(name = "Authentication")
 @RestController @RequestMapping(path = "api/public")
 public class AuthApi {
 

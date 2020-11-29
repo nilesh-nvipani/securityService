@@ -7,7 +7,7 @@ import io.example.domain.dto.UpdateUserRequest;
 import io.example.domain.dto.UserView;
 import io.example.domain.model.Role;
 import io.example.service.UserService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
-@Api(tags = "UserAdmin")
+@Tag(name = "UserAdmin")
 @RestController @RequestMapping(path = "api/admin/user")
 @RolesAllowed(Role.USER_ADMIN)
 public class UserAdminApi {

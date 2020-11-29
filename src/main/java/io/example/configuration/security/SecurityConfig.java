@@ -2,6 +2,7 @@ package io.example.configuration.security;
 
 import io.example.repository.UserRepo;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final Logger logger;
     private final UserRepo userRepo;
     private final JwtTokenFilter jwtTokenFilter;
+
+    @Value("${springdoc.api-docs.path}")
+    private String restApiDocPath;
+    @Value("${springdoc.swagger-ui.path}")
+    private String swaggerPath;
 
     public SecurityConfig(Logger logger,
                           UserRepo userRepo,
@@ -93,11 +98,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // Swagger endpoints must be publicly accessible
                 .antMatchers("/").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/csrf").permitAll()
-                .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers(format("%s/**", restApiDocPath)).permitAll()
+                .antMatchers(format("%s/**", swaggerPath)).permitAll()
                 // Our public endpoints
                 .antMatchers("/api/public/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()

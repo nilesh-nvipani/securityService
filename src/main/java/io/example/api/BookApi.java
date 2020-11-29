@@ -8,7 +8,7 @@ import io.example.domain.dto.SearchBooksRequest;
 import io.example.domain.model.Role;
 import io.example.service.AuthorService;
 import io.example.service.BookService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 
-@Api(tags = "Book")
+@Tag(name = "Book")
 @RestController @RequestMapping(path = "api/book")
 public class BookApi {
 
