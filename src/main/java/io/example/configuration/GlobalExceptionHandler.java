@@ -106,13 +106,15 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiCallError<>("Internal server error", List.of(ex.getMessage())));
     }
+
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class ApiCallError<T> {
+
+        private String message;
+        private List<T> details;
+
+    }
 }
 
-@Data @NoArgsConstructor @AllArgsConstructor
-class ApiCallError<T> {
 
-    private String message;
-    private List<T> details;
-
-}
 
