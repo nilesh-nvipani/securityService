@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -16,16 +17,13 @@ import java.util.Date;
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
 
     private final String jwtSecret = "zdtlD3JK56m6wTTgsNFhqzjqP";
     private final String jwtIssuer = "example.io";
 
     private final Logger logger;
-
-    public JwtTokenUtil(Logger logger) {
-        this.logger = logger;
-    }
 
     public String generateAccessToken(User user) {
         return Jwts.builder()

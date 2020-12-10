@@ -8,6 +8,7 @@ import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +25,13 @@ import javax.validation.Valid;
 
 @Tag(name = "Authentication")
 @RestController @RequestMapping(path = "api/public")
+@RequiredArgsConstructor
 public class AuthApi {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserViewMapper userViewMapper;
     private final UserService userService;
-
-    public AuthApi(AuthenticationManager authenticationManager,
-                   JwtTokenUtil jwtTokenUtil,
-                   UserViewMapper userViewMapper,
-                   UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userViewMapper = userViewMapper;
-        this.userService = userService;
-    }
 
     @PostMapping("login")
     public ResponseEntity<UserView> login(@RequestBody @Valid AuthRequest request) {

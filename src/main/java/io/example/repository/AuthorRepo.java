@@ -4,6 +4,7 @@ import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchAuthorsQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.Author;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,13 +45,10 @@ interface AuthorRepoCustom {
 
 }
 
+@RequiredArgsConstructor
 class AuthorRepoCustomImpl implements AuthorRepoCustom {
 
     private final MongoTemplate mongoTemplate;
-
-    AuthorRepoCustomImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
 
     @Override
     public List<Author> searchAuthors(Page page, SearchAuthorsQuery query) {

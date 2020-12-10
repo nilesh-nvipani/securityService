@@ -1,6 +1,7 @@
 package io.example.configuration.security;
 
 import io.example.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,16 +21,11 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepo userRepo;
-
-    public JwtTokenFilter(JwtTokenUtil jwtTokenUtil,
-                          UserRepo userRepo) {
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userRepo = userRepo;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

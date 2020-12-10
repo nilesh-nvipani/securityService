@@ -10,6 +10,7 @@ import io.example.domain.model.Role;
 import io.example.service.AuthorService;
 import io.example.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +26,11 @@ import javax.validation.Valid;
 
 @Tag(name = "Book")
 @RestController @RequestMapping(path = "api/book")
+@RequiredArgsConstructor
 public class BookApi {
 
     private final BookService bookService;
     private final AuthorService authorService;
-
-    public BookApi(BookService bookService,
-                   AuthorService authorService) {
-        this.bookService = bookService;
-        this.authorService = authorService;
-    }
 
     @RolesAllowed(Role.BOOK_ADMIN)
     @PostMapping

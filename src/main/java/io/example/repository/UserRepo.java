@@ -4,6 +4,7 @@ import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchUsersQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.User;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -67,13 +68,10 @@ interface UserRepoCustom {
 
 }
 
+@RequiredArgsConstructor
 class UserRepoCustomImpl implements UserRepoCustom {
 
     private final MongoTemplate mongoTemplate;
-
-    UserRepoCustomImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
 
     @Override
     public List<User> searchUsers(Page page, SearchUsersQuery query) {

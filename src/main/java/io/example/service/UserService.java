@@ -9,6 +9,7 @@ import io.example.domain.mapper.UserEditMapper;
 import io.example.domain.mapper.UserViewMapper;
 import io.example.domain.model.User;
 import io.example.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,22 +26,13 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
     private final UserEditMapper userEditMapper;
     private final UserViewMapper userViewMapper;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepo userRepo,
-                       UserEditMapper userEditMapper,
-                       UserViewMapper userViewMapper,
-                       PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.userEditMapper = userEditMapper;
-        this.userViewMapper = userViewMapper;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public UserView create(CreateUserRequest request) {

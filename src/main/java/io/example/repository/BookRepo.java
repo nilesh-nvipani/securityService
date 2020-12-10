@@ -4,6 +4,7 @@ import io.example.domain.dto.Page;
 import io.example.domain.dto.SearchBooksQuery;
 import io.example.domain.exception.NotFoundException;
 import io.example.domain.model.Book;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,13 +45,10 @@ interface BookRepoCustom {
 
 }
 
+@RequiredArgsConstructor
 class BookRepoCustomImpl implements BookRepoCustom {
 
-    private MongoTemplate mongoTemplate;
-
-    BookRepoCustomImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public List<Book> searchBooks(Page page, SearchBooksQuery query) {

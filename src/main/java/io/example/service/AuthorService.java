@@ -10,6 +10,7 @@ import io.example.domain.model.Author;
 import io.example.domain.model.Book;
 import io.example.repository.AuthorRepo;
 import io.example.repository.BookRepo;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,22 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AuthorService {
 
     private final AuthorRepo authorRepo;
     private final BookRepo bookRepo;
     private final AuthorEditMapper authorEditMapper;
     private final AuthorViewMapper authorViewMapper;
-
-    public AuthorService(AuthorRepo authorRepo,
-                         BookRepo bookRepo,
-                         AuthorEditMapper authorEditMapper,
-                         AuthorViewMapper authorViewMapper) {
-        this.authorRepo = authorRepo;
-        this.bookRepo = bookRepo;
-        this.authorEditMapper = authorEditMapper;
-        this.authorViewMapper = authorViewMapper;
-    }
 
     @Transactional
     public AuthorView create(EditAuthorRequest request) {

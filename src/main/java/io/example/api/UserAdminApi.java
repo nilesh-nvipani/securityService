@@ -9,6 +9,7 @@ import io.example.domain.dto.UserView;
 import io.example.domain.model.Role;
 import io.example.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,10 @@ import javax.validation.Valid;
 @Tag(name = "UserAdmin")
 @RestController @RequestMapping(path = "api/admin/user")
 @RolesAllowed(Role.USER_ADMIN)
+@RequiredArgsConstructor
 public class UserAdminApi {
 
     private final UserService userService;
-
-    public UserAdminApi(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public UserView create(@RequestBody @Valid CreateUserRequest request) {
