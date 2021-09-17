@@ -37,8 +37,8 @@ public interface UserRepo extends UserRepoCustom, MongoRepository<User, ObjectId
     <S extends User> List<S> saveAll(Iterable<S> entities);
 
     @Caching(evict = {
-            @CacheEvict(key = "#p0.id"),
-            @CacheEvict(key = "#p0.username")
+            @CacheEvict(key = "#p0.id", condition="#p0.id != null"),
+            @CacheEvict(key = "#p0.username", condition="#p0.username != null")
     })
     <S extends User> S save(S entity);
 
